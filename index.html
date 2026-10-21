@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#111827" />
+  <title>Postfix Expression Stack Visualizer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-mark" aria-hidden="true">▤</div>
+    <div>
+      <p class="eyebrow">DATA STRUCTURES • INTERACTIVE DEMO</p>
+      <h1>Postfix Expression Evaluator</h1>
+    </div>
+    <div class="top-pill"><span class="live-dot"></span> Ready to evaluate</div>
+  </header>
+
+  <main class="page-shell">
+    <section class="intro-grid">
+      <div class="intro-copy">
+        <p class="section-kicker">STACK-BASED CALCULATOR</p>
+        <h2>Watch every push, pop, and calculation.</h2>
+        <p>Enter a postfix expression and step through how a Last-In, First-Out (LIFO) stack evaluates it. Every operand is pushed; every operator uses the top two values.</p>
+      </div>
+      <div class="rule-card">
+        <div class="rule-icon">↕</div>
+        <div><strong>One rule to remember</strong><p>Pop the <em>right</em> operand first, then the <em>left</em> operand. Calculate <code>left operator right</code>, then push the result.</p></div>
+      </div>
+    </section>
+
+    <section class="input-card panel" aria-labelledby="expression-heading">
+      <div class="panel-heading">
+        <div><p class="section-kicker">01 / EXPRESSION</p><h3 id="expression-heading">Enter your postfix expression</h3></div>
+        <button id="exampleBtn" class="text-button" type="button">Load assignment example ↗</button>
+      </div>
+      <label class="sr-only" for="expressionInput">Postfix expression</label>
+      <div class="expression-row">
+        <div class="expression-prefix" aria-hidden="true">fx</div>
+        <input id="expressionInput" type="text" spellcheck="false" autocomplete="off" value="5 6 2 + * 12 4 / -" placeholder="Example: 5 6 2 + * 12 4 / -" />
+        <button id="loadBtn" class="primary-button" type="button">Evaluate expression <span aria-hidden="true">→</span></button>
+      </div>
+      <div class="input-footer">
+        <p>Separate each number and operator with a space. Supported operators: <code>+ − × ÷ ^ %</code></p>
+        <p id="message" class="message" role="status" aria-live="polite">Ready. Load an expression to begin.</p>
+      </div>
+    </section>
+
+    <section class="workspace-grid">
+      <div class="panel playback-panel">
+        <div class="panel-heading compact-heading">
+          <div><p class="section-kicker">02 / ANIMATION</p><h3>Evaluation in motion</h3></div>
+          <span id="stepBadge" class="step-badge">Step 0 / 9</span>
+        </div>
+        <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
+        <div class="token-strip-wrap">
+          <p class="mini-label">POSTFIX TOKENS</p>
+          <div id="tokenStrip" class="token-strip"><span class="muted">Your tokens will appear here.</span></div>
+        </div>
+
+        <div class="action-card" aria-live="polite">
+          <div id="actionIcon" class="action-icon neutral">Ⅱ</div>
+          <div class="action-copy">
+            <p id="actionLabel" class="mini-label">WAITING FOR INPUT</p>
+            <h4 id="actionTitle">Ready to start</h4>
+            <p id="actionDescription">Load a valid expression, then press Play or Step forward.</p>
+          </div>
+        </div>
+
+        <div id="operationBreakdown" class="operation-breakdown hidden">
+          <div class="operand-box"><span>LEFT OPERAND</span><strong id="leftOperand">—</strong></div>
+          <div class="operator-symbol" id="operatorSymbol">+</div>
+          <div class="operand-box"><span>RIGHT OPERAND</span><strong id="rightOperand">—</strong></div>
+          <div class="equals-symbol">=</div>
+          <div class="result-box"><span>RESULT</span><strong id="operationResult">—</strong></div>
+        </div>
+
+        <div class="controls-row">
+          <button id="resetBtn" class="control-button" type="button" disabled><span aria-hidden="true">↺</span> Reset</button>
+          <div class="step-controls">
+            <button id="prevBtn" class="icon-button" type="button" aria-label="Step backward" disabled>←</button>
+            <button id="playBtn" class="play-button" type="button" disabled><span id="playIcon" aria-hidden="true">▶</span> <span id="playText">Play animation</span></button>
+            <button id="nextBtn" class="icon-button" type="button" aria-label="Step forward" disabled>→</button>
+          </div>
+        </div>
+        <div class="speed-row"><label for="speedInput">Animation speed</label><input id="speedInput" type="range" min="500" max="1800" step="100" value="1100" /><span id="speedLabel">Normal</span></div>
+      </div>
+
+      <aside class="panel stack-panel">
+        <div class="panel-heading compact-heading">
+          <div><p class="section-kicker">03 / DATA STRUCTURE</p><h3>Stack memory</h3></div>
+          <span class="top-indicator"><span class="live-dot"></span> TOP</span>
+        </div>
+        <div class="stack-caption"><span>Last In, First Out (LIFO)</span><span id="stackCount">0 items</span></div>
+        <div class="stack-stage">
+          <div id="stackTopHint" class="stack-top-hint">← TOP OF STACK</div>
+          <div id="stackItems" class="stack-items" aria-label="Stack values">
+            <div class="empty-stack"><span>∅</span><p>Stack is empty</p></div>
+          </div>
+          <div class="stack-base"><span>STACK BASE</span></div>
+        </div>
+        <div class="stack-note"><span class="note-dot"></span><p>The top value is the next value to be popped. The stack shown here is the state <strong>after</strong> the current token is processed.</p></div>
+        <div id="finalResult" class="final-result hidden">
+          <div class="result-check">✓</div><div><span>FINAL ANSWER</span><strong id="finalValue">37</strong></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="panel trace-panel">
+      <div class="panel-heading">
+        <div><p class="section-kicker">04 / STEP-BY-STEP TRACE</p><h3>Processing log</h3></div>
+        <span class="trace-hint">Select any completed step to inspect it</span>
+      </div>
+      <div class="trace-table-wrap">
+        <table>
+          <thead><tr><th>Step</th><th>Token</th><th>Action</th><th>Stack after processing (bottom → top)</th></tr></thead>
+          <tbody id="traceBody"><tr><td colspan="4" class="trace-empty">Enter a valid expression to generate the processing trace.</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="concept-grid">
+      <article class="concept-card"><span class="concept-number">A</span><div><h4>Operand → Push</h4><p>A number is placed on top of the stack without calculation.</p></div><span class="concept-symbol push-symbol">↑</span></article>
+      <article class="concept-card"><span class="concept-number">B</span><div><h4>Operator → Pop twice</h4><p>Pop right, then left. Apply the operator in the correct order.</p></div><span class="concept-symbol pop-symbol">↓</span></article>
+      <article class="concept-card"><span class="concept-number">C</span><div><h4>Push the result</h4><p>The calculated value goes back on top for the next operation.</p></div><span class="concept-symbol result-symbol">=</span></article>
+    </section>
+    <footer class="page-footer"><span>STACK-BASED EXPRESSION EVALUATION</span><span>Time: O(n) &nbsp; • &nbsp; Auxiliary space: O(n)</span></footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
